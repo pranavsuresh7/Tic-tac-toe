@@ -56,6 +56,17 @@ public class TicTacToe {
         return TIE;
     }
 
+    static boolean checkAnyMoveLeft() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board.get(i).get(j) == -1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     static void displayBoard() {
         for (int i = 0; i < 3; i++) {
             System.out.println();
@@ -93,7 +104,7 @@ public class TicTacToe {
             } else {
                 break;
             }
-            if (getWinner() != 0) {
+            if (!checkAnyMoveLeft() || getWinner() != 0) {
                 break;
             }
         }
