@@ -109,17 +109,17 @@ public class TicTacToe {
             }
             int row = sc.nextInt();
             int col = sc.nextInt();
-            if (!isNextMoveValid(row, col)) {
+            if (!isNextMoveValid(row-1, col-1)) {
                 while (true) {
                     System.out.println("Enter valid position in the format row column");
                     row = sc.nextInt();
                     col = sc.nextInt();
-                    if (isNextMoveValid(row, col)) {
+                    if (isNextMoveValid(row-1, col-1)) {
                         break;
                     }
                 }
             }
-            if (playNextMove(player, row, col) == 0 || !checkAnyMoveLeft()) {
+            if (playNextMove(player, row-1, col-1) == 0 || !checkAnyMoveLeft()) {
                 break;
             }
             player = player == 1 ? 2 : 1;
