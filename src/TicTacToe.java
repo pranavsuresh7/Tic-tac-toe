@@ -19,7 +19,7 @@ public class TicTacToe {
 
     static boolean isNextMoveValid(int row, int col) {
         if (row > 2 || row < 0 || col > 2 || col < 0) {
-            throw new ArrayIndexOutOfBoundsException("Don't type position outside the board");
+            return false;
         }
         if (board.get(row).get(col) == -1) {
             return true;
