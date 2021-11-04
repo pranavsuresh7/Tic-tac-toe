@@ -17,7 +17,7 @@ public class TicTacToe {
         }
     }
 
-    static boolean isCurrentMoveValid(int row, int col) {
+    static boolean isNextMoveValid(int row, int col) {
         if (row > 2 || row < 0 || col > 2 || col < 0) {
             throw new ArrayIndexOutOfBoundsException("Don't type position outside the board");
         }
@@ -27,8 +27,14 @@ public class TicTacToe {
         return false;
     }
 
-    static void playNextMove(int player, int row, int col) {
+    static int playNextMove(int player, int row, int col) {
+        int NEXT_MOVE_POSSIBLE = 1;
         board.get(row).set(col, player);
+        int playerWon = getWinner();
+        if (playerWon != 0) {
+            NEXT_MOVE_POSSIBLE = 0;
+        }
+        return NEXT_MOVE_POSSIBLE;
     }
 
     static int getWinner() {
@@ -53,6 +59,12 @@ public class TicTacToe {
         if (board.get(0).get(0) == 2 && board.get(1).get(1) == 2 && board.get(2).get(2) == 2) {
             return PLAYER_TWO;
         }
+        if (board.get(2).get(0) == 1 && board.get(1).get(1) == 1 && board.get(0).get(2) == 1) {
+            return PLAYER_ONE;
+        }
+        if (board.get(2).get(0) == 2 && board.get(1).get(1) == 2 && board.get(0).get(2) == 2) {
+            return PLAYER_TWO;
+        }
         return TIE;
     }
 
@@ -72,7 +84,7 @@ public class TicTacToe {
             System.out.println();
             for (int j = 0; j < 3; j++) {
                 if (board.get(i).get(j) == -1) {
-                    System.out.print("U ");
+                    System.out.print("_ ");
                 }
                 if (board.get(i).get(j) == PLAYER_ONE) {
                     System.out.print("X ");
@@ -84,29 +96,33 @@ public class TicTacToe {
         }
     }
 
-    public static void main(String[] args) {
+    static void playGame() {
         Scanner sc = new Scanner(System.in);
-        initialiseBoard();
-        int player = 1;
-        System.out.println("U is marked as unmarked position and X for player 1 and O for player 2");
+        System.out.println("_ is marked as unmarked position and 'X' for player 1 and 'O' for player 2");
+        int player = PLAYER_ONE;
         while (true) {
             displayBoard();
             if (player == PLAYER_ONE) {
-                System.out.println("Player 1 turn type position");
+                System.out.println("Player 1 turn, enter valid position in the format row column");
             } else {
                 System.out.println("Player 2 turn type position");
             }
             int row = sc.nextInt();
             int col = sc.nextInt();
-            if (isCurrentMoveValid(row, col)) {
-                playNextMove(player, row, col);
-                player = player == 1 ? 2 : 1;
-            } else {
+            if (!isNextMoveValid(row, col)) {
+                while (true) {
+                    System.out.println("Enter valid position in the format row column");
+                    row = sc.nextInt();
+                    col = sc.nextInt();
+                    if (isNextMoveValid(row, col)) {
+                        break;
+                    }
+                }
+            }
+            if (playNextMove(player, row, col) == 0 || !checkAnyMoveLeft()) {
                 break;
             }
-            if (!checkAnyMoveLeft() || getWinner() != 0) {
-                break;
-            }
+            player = player == 1 ? 2 : 1;
         }
 
         if (getWinner() == PLAYER_ONE) {
@@ -116,5 +132,10 @@ public class TicTacToe {
         } else {
             System.out.println("No one won, the match is tie");
         }
+    }
+
+    public static void main(String[] args) {
+        initialiseBoard();
+        playGame();
     }
 }
