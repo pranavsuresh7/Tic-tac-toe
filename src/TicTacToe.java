@@ -10,22 +10,21 @@ public class TicTacToe {
 
     private static ArrayList<List<Integer>> board;
 
+    /*
+        Initialise the board as a two-dimensional matrix with value as -1 and size as 3 * 3.
+    */
     static void initialiseBoard() {
-        /*
-            Initialises board as two-dimensional ArrayList with value as -1 and size as 3 * 3.
-        */
         board = new ArrayList<List<Integer>>();
         for (int i = 0; i < 3; i++) {
             board.add(Arrays.asList(-1, -1, -1));
         }
     }
 
+    /*
+        Checks if the user input is valid or not.
+        Input is valid if position is inside the board, and it has not been marked yet.
+    */
     static boolean isNextMoveValid(int row, int col) {
-        /*
-            Checks if the input is valid or not. By going through following steps.
-            1. If the position is out of the board or not.
-            2. If it is already marked or not.
-        */
         if (row > 2 || row < 0 || col > 2 || col < 0) {
             return false;
         }
@@ -35,11 +34,12 @@ public class TicTacToe {
         return false;
     }
 
+    /*
+        Sets the position of the player in the board.
+        If all positions are marked or there is a winner it displays the winner.
+        Returns if it is possible to continue game or not.
+    */
     static int playNextMove(int player, int row, int col) {
-        /*
-            Marks the board with respective player his/her position.
-            If the game is fully marked or there is a winner returns false else true.
-        */
         int canGameContinue = 1;
         board.get(row).set(col, player);
         int playerWon = getWinner();
@@ -52,16 +52,15 @@ public class TicTacToe {
                 System.out.println("No one won, the match is tie");
             }
             canGameContinue = 0;
+            displayBoard();
         }
         return canGameContinue;
     }
 
+    /*
+       If there is a winning pattern then return the winner else return tie.
+    */
     static int getWinner() {
-        /*
-            Checks if there is pattern where PLAYER_ONE or PLAYER_TWO consecutive appears in a row or column or
-            diagonally. Returns PLAYER_ONE or PLAYER_TWO based on the consecutive pattern appearance as above-mentioned
-            condition and TIE if no one wins.
-        */
         int TIE = 0;
         for (int i = 0; i < 3; i++) {
             if (board.get(i).get(0) == 1 && board.get(i).get(1) == 1 && board.get(i).get(2) == 1) {
@@ -92,10 +91,10 @@ public class TicTacToe {
         return TIE;
     }
 
+    /*
+        Returns true if there is any position left to mark else false.
+    */
     static boolean checkAnyMoveLeft() {
-        /*
-            Returns true if there is any position left to mark else false.
-        */
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (board.get(i).get(j) == -1) {
@@ -106,10 +105,10 @@ public class TicTacToe {
         return false;
     }
 
+    /*
+        Initialises the board with -1 same as the pre-starting state of the game.
+    */
     static void reInitialiseBoard() {
-        /*
-            Initialise the board with -1 as the pre-starting state of the game.
-        */
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 board.get(i).set(j, -1);
@@ -117,11 +116,11 @@ public class TicTacToe {
         }
     }
 
+    /*
+        Displays the board in the console with "_" as unmarked position-
+        and "X" for PLAYER_ONE position and "O" for PLAYER_TWO.
+    */
     static void displayBoard() {
-        /*
-            Displays the board in the console with "_" as unmarked position-
-            and "X" for PLAYER_ONE position and "O" for PLAYER_TWO.
-        */
         for (int i = 0; i < 3; i++) {
             System.out.println();
             for (int j = 0; j < 3; j++) {
@@ -139,26 +138,29 @@ public class TicTacToe {
         System.out.println();
     }
 
+    /*
+        Starts playing the game.
+    */
     static void playGame() {
-        /*
-            Starts playing the game.
-        */
         Scanner sc = new Scanner(System.in);
-        System.out.println("_ is marked as unmarked position and 'X' for player 1 and 'O' for player 2");
+        System.out.println("'_' is marked as unmarked position and 'X' for player 1 and 'O' for player 2.");
         int player = PLAYER_ONE;
         boolean shouldGameContinue = true;
         do {
             displayBoard();
             if (player == PLAYER_ONE) {
-                System.out.println("Player 1 turn, enter valid position in the format row column , the value should  greater than 0 and less than 4");
+                System.out.println("Player 1's turn, enter valid position in the format row column , the value should be " +
+                        "greater than 0 and less than 4.");
             } else {
-                System.out.println("Player 2 turn type position, the value should  greater than 0 and less than 4");
+                System.out.println("Player 2's turn type position, the value should be greater than 0 and less than 4.");
             }
             int row = sc.nextInt();
             int col = sc.nextInt();
             if (!isNextMoveValid(row - 1, col - 1)) {
                 while (true) {
-                    System.out.println("You've entered invalid position, please enter valid position in the format row column which should be lesser than 4 and greater than 0");
+                    System.out.println("You've entered an invalid position, please enter a valid position in the" +
+                            "\nformat row column which should be less than 4 and greater than 0 " +
+                            "and it shouldn't be a marked position.");
                     row = sc.nextInt();
                     col = sc.nextInt();
                     if (isNextMoveValid(row - 1, col - 1)) {
@@ -167,7 +169,7 @@ public class TicTacToe {
                 }
             }
             if (playNextMove(player, row - 1, col - 1) == 0) {
-                System.out.println("Do you want to continue the game? Press 1 to play game once again else press 0");
+                System.out.println("Do you want to continue the game? Press 1 to play game once again else press 0.");
                 if (sc.nextInt() == 1) {
                     reInitialiseBoard();
                 } else {
