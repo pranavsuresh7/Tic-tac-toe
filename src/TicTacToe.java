@@ -116,6 +116,68 @@ public class TicTacToe {
         }
     }
 
+    static int miniMax(int player, boolean setMaxValue) {
+        int playerWon = getWinner();
+        if (playerWon == player) {
+            return 10;
+        }
+        if (playerWon != 0) {
+            return -10;
+        }
+        if (!checkAnyMoveLeft()) {
+            return 0;
+        }
+        if (setMaxValue) {
+            int bestScore = -1000;
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if (board.get(i).get(j) == -1) {
+                        board.get(i).set(j, player);
+                        bestScore = Math.max(bestScore, miniMax(player == PLAYER_ONE ? PLAYER_TWO : PLAYER_ONE,
+                                !setMaxValue));
+                        board.get(i).set(j, -1);
+                    }
+                }
+            }
+            return bestScore;
+        } else {
+            int bestScore = 1000;
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if (board.get(i).get(j) == -1) {
+                        board.get(i).set(j, player);
+                        bestScore = Math.min(bestScore, miniMax(player == PLAYER_ONE ? PLAYER_TWO : PLAYER_ONE,
+                                !setMaxValue));
+                        board.get(i).set(j, -1);
+                    }
+                }
+            }
+            return bestScore;
+        }
+    }
+
+    static ArrayList<Integer> predictNextBestMove(int player) {
+        ArrayList bestMove = new ArrayList();
+        boolean gotAnyMove = false;
+        int thresholdForBestMove = Integer.MIN_VALUE;
+        int row = -1, col = -1;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board.get(i).get(j) == -1) {
+                    int currentBestMoveScore = miniMax(player, true);
+                    if (currentBestMoveScore > thresholdForBestMove) {
+                        thresholdForBestMove = currentBestMoveScore;
+                        row = i;
+                        col = j;
+                    }
+                }
+            }
+        }
+        bestMove.add(row+1);
+        bestMove.add(col+1);
+        return bestMove;
+    }
+
     /*
         Displays the board in the console with "_" as unmarked position-
         and "X" for PLAYER_ONE position and "O" for PLAYER_TWO.
@@ -182,8 +244,54 @@ public class TicTacToe {
         sc.close();
     }
 
+    static void playGameWithComputer(){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("'_' is marked as unmarked position and 'X' for player 1 and 'O' for player Computer.");
+        int player = PLAYER_ONE;
+        boolean shouldGameContinue = true;
+        do {
+            displayBoard();
+            int row , col;
+            if (player == PLAYER_ONE) {
+                System.out.println("Player 1's turn, enter valid position in the format row column , the value should be " +
+                        "greater than 0 and less than 4.");
+                row = sc.nextInt();
+                col = sc.nextInt();
+            } else {
+                System.out.println("Player 2's turn");
+                ArrayList<Integer> bestMove = predictNextBestMove(PLAYER_TWO);
+                row = bestMove.get(0);
+                col = bestMove.get(1);
+            }
+
+            if (!isNextMoveValid(row - 1, col - 1)) {
+                while (true) {
+                    System.out.println("You've entered an invalid position, please enter a valid position in the" +
+                            "\nformat row column which should be less than 4 and greater than 0 " +
+                            "and it shouldn't be a marked position.");
+                    row = sc.nextInt();
+                    col = sc.nextInt();
+                    if (isNextMoveValid(row - 1, col - 1)) {
+                        break;
+                    }
+                }
+            }
+            if (playNextMove(player, row - 1, col - 1) == 0) {
+                System.out.println("Do you want to continue the game? Press 1 to play game once again else press 0.");
+                if (sc.nextInt() == 1) {
+                    reInitialiseBoard();
+                } else {
+                    shouldGameContinue = false;
+                }
+            }
+            player = player == PLAYER_ONE ? PLAYER_TWO : PLAYER_ONE;
+        } while (shouldGameContinue);
+
+        sc.close();
+    }
     public static void main(String[] args) {
         initialiseBoard();
-        playGame();
+//        playGame();
+        playGameWithComputer();
     }
 }
