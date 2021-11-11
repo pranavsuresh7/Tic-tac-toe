@@ -5,16 +5,14 @@ import java.util.Scanner;
 
 public class TicTacToe {
 
-    static int PLAYER_ONE = 1;
-    static int PLAYER_TWO = 2;
+    static final int PLAYER_ONE = 1;
+    static final int PLAYER_TWO = 2;
 
     private static ArrayList<List<Integer>> board;
 
     static class Move {
         int row, col;
-    }
-
-    ;
+    };
 
     /*
         Initialise the board as a two-dimensional matrix with value as -1 and size as 3 * 3.
@@ -192,6 +190,17 @@ public class TicTacToe {
     }
 
     /*
+        Suggest the best possible move for the player.
+    */
+    static Move autoSuggestNextBestMove(int player) {
+        Move suggestedNextBestMove = predictNextBestMove(player);
+        board.get(suggestedNextBestMove.row).set(suggestedNextBestMove.col, player);
+        System.out.println("Preview of the suggested move.");
+        displayBoard();
+        return predictNextBestMove(player);
+    }
+
+    /*
         Displays the board in the console with "_" as unmarked position-
         and "X" for PLAYER_ONE position and "O" for PLAYER_TWO.
     */
@@ -227,14 +236,41 @@ public class TicTacToe {
             displayBoard();
             int row, col;
             if (player == PLAYER_ONE) {
-                System.out.println("Player 1's turn, enter valid position in the format row column , the value should be " +
-                        "greater than 0 and less than 4.");
-                row = sc.nextInt();
-                col = sc.nextInt();
+                System.out.println("Player 1's turn, to get auto suggestion for the move press 1 if you don't need press 2");
+                if (sc.nextInt() == 1) {
+                    Move suggestedNextBestMove = autoSuggestNextBestMove(player);
+                    System.out.println("Do You want to continue with the suggestion if 'Yes' press 1 if 'No' press 2.");
+                    if (sc.nextInt() == 1) {
+                        row = suggestedNextBestMove.row;
+                        col = suggestedNextBestMove.col;
+                    } else {
+                        System.out.println("Enter a valid position in the format row column , the value should be greater" +
+                                " than 0 and less than 4. ");
+                        row = sc.nextInt();
+                        col = sc.nextInt();
+                    }
+                } else {
+                    row = sc.nextInt();
+                    col = sc.nextInt();
+                }
             } else if (!isPlayerTwoAi && player == PLAYER_TWO) {
-                System.out.println("Player 2's turn type position, the value should be greater than 0 and less than 4.");
-                row = sc.nextInt();
-                col = sc.nextInt();
+                System.out.println("Player 2's turn, to get auto suggestion for the move press 1 if you don't need press 2");
+                if (sc.nextInt() == 1) {
+                    Move suggestedNextBestMove = autoSuggestNextBestMove(player);
+                    System.out.println("Do You want to continue with the suggestion if 'Yes' press 1 if 'No' press 2.");
+                    if (sc.nextInt() == 1) {
+                        row = suggestedNextBestMove.row;
+                        col = suggestedNextBestMove.col;
+                    } else {
+                        System.out.println("Enter a valid position in the format row column , the value should be greater" +
+                                " than 0 and less than 4. ");
+                        row = sc.nextInt();
+                        col = sc.nextInt();
+                    }
+                } else {
+                    row = sc.nextInt();
+                    col = sc.nextInt();
+                }
             } else {
                 System.out.println("Player 2 Computer's Turn");
                 Move nextBestPredictedMove = predictNextBestMove(PLAYER_TWO);
