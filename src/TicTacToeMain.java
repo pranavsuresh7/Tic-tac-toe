@@ -9,7 +9,7 @@ public class TicTacToeMain {
     private static ArrayList<List<Integer>> board;
 
     static class Move {
-        int row, col;
+        int row=-1, col=-1;
     };
 
     /*
@@ -183,15 +183,16 @@ public class TicTacToeMain {
                         row = i;
                         col = j;
                     }
-                    if (GAME_MODE == 2 && player == PLAYER_TWO) {
-                        gotAnyMove = true;
-                        break;
-                    }
+//                    if (GAME_MODE == 2 && player == PLAYER_TWO) {
+//                        System.out.println(player +" "+GAME_MODE+ "THIS IS JUST FOR CHECKING");
+//                        gotAnyMove = true;
+//                        break;
+//                    }
                 }
             }
-            if (gotAnyMove) {
-                break;
-            }
+//            if (gotAnyMove) {
+//                break;
+//            }
         }
         bestMove.row = row + 1;
         bestMove.col = col + 1;
@@ -232,13 +233,60 @@ public class TicTacToeMain {
         System.out.println();
     }
 
+    static Move getNextMoveFromUser(Scanner sc,Player currentPlayer,Player playerTwo,
+                                 Player playerThree,int playerValue,Boolean isPlayerTwoAi){
+        Move nextMoveFromUser = new Move();
+        System.out.println(currentPlayer.getName() + "'s turn,Enter a valid position in the format row column , \n" +
+                "the value should be greater than 0 and less than 4. , type HELP for autosuggestion. " +
+                "type RESET for resetting the game.");
+        String inputFromPlayer = sc.nextLine();
+        if (inputFromPlayer.equals("HELP")) {
+            Move suggestedNextBestMove = autoSuggestNextBestMove(playerValue);
+            System.out.println("Do You want to continue with the suggestion if 'Yes' press 1 if 'No' press 2.");
+            if (Integer.parseInt(sc.nextLine()) == 1) {
+                nextMoveFromUser.row = suggestedNextBestMove.row;
+                nextMoveFromUser.col = suggestedNextBestMove.col;
+            } else {
+                System.out.println("Enter a valid position in the format row column , the value should be greater" +
+                        " than 0 and less than 4. ");
+                String[] input = sc.nextLine().split(" ");
+                nextMoveFromUser.row = Integer.parseInt(input[0]);
+                nextMoveFromUser.col = Integer.parseInt(input[1]);
+            }
+        } else if (inputFromPlayer.equals("RESET")) {
+            reInitialiseBoard();
+            currentPlayer.setNumberOfTies(1);
+            if(isPlayerTwoAi){
+                playerThree.setNumberOfTies(1);
+            }else{
+                playerTwo.setNumberOfTies(1);
+            }
+            System.out.println("Do you want to play with Computer? If 'Yes' then press 1 and press 0 for 'No'");
+            if(Integer.parseInt(sc.nextLine()) == 1){
+                playerThree.setNumberOfGames(1);
+                System.out.println("GAME MODE " + "\n1.HARD press 1" + "\n2.EASY press 2");
+                GAME_MODE = Integer.parseInt(sc.nextLine());
+                nextMoveFromUser.row = -2;
+                nextMoveFromUser.col = -2;
+                return nextMoveFromUser;
+            }
+            nextMoveFromUser.row = -3;
+            nextMoveFromUser.col = -3;
+        } else {
+            String[] input = inputFromPlayer.split(" ");
+            nextMoveFromUser.row = Integer.parseInt(input[0]);
+            nextMoveFromUser.col = Integer.parseInt(input[1]);
+        }
+        return nextMoveFromUser;
+    }
+
     /*
         Starts playing the game.
     */
     static void playGame() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Do you want to play with Computer? If Yes then press 1 or press 0 for No");
-        boolean isPlayerTwoAi = Integer.parseInt(sc.nextLine()) == 1 ? true : false;
+        boolean isPlayerTwoAi = Integer.parseInt(sc.nextLine()) == 1;
         Player playerOne = new Player();
         Player playerTwo = new Player();
         Player playerThree = new Player();
@@ -252,22 +300,21 @@ public class TicTacToeMain {
         }else{
             playerThree.setName("CPU");
             playerThree.setNumberOfGames(1);
-        }
-        if (isPlayerTwoAi) {
             System.out.println("GAME MODE " + "\n1.HARD press 1" + "\n2.EASY press 2");
             GAME_MODE = Integer.parseInt(sc.nextLine());
         }
-        System.out.println("'_' is marked as unmarked position and 'X' for player 1 and 'O' for player 2.");
+        System.out.println("'_' is marked as unmarked position and" +"'X' for "+playerOne.getName()+
+                " and 'O' for "+(isPlayerTwoAi?playerThree.getName():playerTwo.getName()));
         int player = PLAYER_ONE;
         boolean shouldGameContinue = true;
         do {
             displayBoard();
             int row, col;
             if (player == PLAYER_ONE) {
+                getNextMoveFromUser(sc,playerOne,playerTwo,playerThree,player,isPlayerTwoAi);
                 System.out.println(playerOne.getName() + "'s turn,Enter a valid position in the format row column , \n" +
                         "the value should be greater than 0 and less than 4. , type HELP for autosuggestion. " +
                         "type RESET for resetting the game.");
-//                sc.nextLine();
                 String inputFromPlayer = sc.nextLine();
                 if (inputFromPlayer.equals("HELP")) {
                     Move suggestedNextBestMove = autoSuggestNextBestMove(player);
@@ -278,8 +325,9 @@ public class TicTacToeMain {
                     } else {
                         System.out.println("Enter a valid position in the format row column , the value should be greater" +
                                 " than 0 and less than 4. ");
-                        row = Integer.parseInt(sc.nextLine());
-                        col = Integer.parseInt(sc.nextLine());
+                        String[] input = sc.nextLine().split(" ");
+                        row = Integer.parseInt(input[0]);
+                        col = Integer.parseInt(input[1]);
                     }
                 } else if (inputFromPlayer.equals("RESET")) {
                     reInitialiseBoard();
@@ -289,7 +337,7 @@ public class TicTacToeMain {
                     }else{
                         playerTwo.setNumberOfTies(1);
                     }
-                    System.out.println("Do you want to play with Computer? If Yes then press 1 else 0");
+                    System.out.println("Do you want to play with Computer? If 'Yes' then press 1 and press 0 for 'No'");
                     if(Integer.parseInt(sc.nextLine()) == 1){
                         playerThree.setNumberOfGames(1);
                         System.out.println("GAME MODE " + "\n1.HARD press 1" + "\n2.EASY press 2");
@@ -305,7 +353,6 @@ public class TicTacToeMain {
                 System.out.println(playerTwo.getName() + "'s turn,Enter a valid position in the format row column , \n" +
                         "the value should be greater than 0 and less than 4. , type HELP for autosuggestion. " +
                         "type RESET for resetting the game.");
-//                sc.nextLine();
                 String inputFromPlayer = sc.nextLine();
                 if (inputFromPlayer.equals("HELP")) {
                     Move suggestedNextBestMove = autoSuggestNextBestMove(player);
@@ -316,8 +363,9 @@ public class TicTacToeMain {
                     } else {
                         System.out.println("Enter a valid position in the format row column , the value should be greater" +
                                 " than 0 and less than 4. ");
-                        row = Integer.parseInt(sc.nextLine());
-                        col = Integer.parseInt(sc.nextLine());
+                        String[] input = sc.nextLine().split(" ");
+                        row = Integer.parseInt(input[0]);
+                        col = Integer.parseInt(input[1]);
                     }
                 } else if (inputFromPlayer.equals("RESET")) {
                     reInitialiseBoard();
@@ -339,7 +387,7 @@ public class TicTacToeMain {
                     col = Integer.parseInt(input[1]);
                 }
             } else {
-                System.out.println("Player 2 Computer's Turn");
+                System.out.println("CPU's Turn");
                 Move nextBestPredictedMove = predictNextBestMove(PLAYER_TWO);
                 row = nextBestPredictedMove.row;
                 col = nextBestPredictedMove.col;
@@ -360,10 +408,10 @@ public class TicTacToeMain {
                 System.out.println(playerOne.getName() + " won: " + playerOne.getNumberOfWins() + " times");
                 System.out.println("loss: " + playerOne.getNumberOfLoss());
                 System.out.println("Number of matches tie " + playerOne.getNumberOfTies());
-                System.out.println("Do you want to continue the game? Press 1 to play game once again else press 0.");
+                System.out.println("Do you want to continue the game? Press 1 to play game once again and for EXIT press 0.");
                 if (Integer.parseInt(sc.nextLine()) == 1) {
                     System.out.println("Do you want to play with computer? If Yes press 1 else 0.");
-                    isPlayerTwoAi = Integer.parseInt(sc.nextLine()) == 1 ? true : false;
+                    isPlayerTwoAi = Integer.parseInt(sc.nextLine()) == 1;
                     reInitialiseBoard();
                     player = PLAYER_ONE;
                     continue;
