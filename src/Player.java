@@ -1,8 +1,7 @@
 public class Player {
     private String name;
-    private String opponentName;
     private int numberOfWins = 0;
-    private int numberOfLoss = 0;
+    private int numberOfGames = 0;
     private int numberOfTies = 0;
 
     public String getName() {
@@ -11,14 +10,6 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getOpponentName() {
-        return opponentName;
-    }
-
-    public void setOpponentName(String opponentName) {
-        this.opponentName = opponentName;
     }
 
     public int getNumberOfWins() {
@@ -30,11 +21,15 @@ public class Player {
     }
 
     public int getNumberOfLoss() {
-        return numberOfLoss;
+        return numberOfGames - numberOfWins - numberOfTies;
     }
 
-    public void setNumberOfLoss(int numberOfLoss) {
-        this.numberOfLoss += numberOfLoss;
+    public int getNumberOfGames() {
+        return numberOfGames;
+    }
+
+    public void setNumberOfGames(int numberOfGames) {
+        this.numberOfGames += numberOfGames;
     }
 
     public int getNumberOfTies() {
