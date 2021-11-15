@@ -301,6 +301,7 @@ public class TicTacToeMain {
             System.out.println("Player 1 enter name.");
             playerOne.setName(sc.nextLine());
             playerOne.setNumberOfGames(1);
+            playerThree.setName("CPU");
             if (!isPlayerTwoAi) {
                 System.out.println("Player 2 enter name.");
                 playerTwo.setName(sc.nextLine());
