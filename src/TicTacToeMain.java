@@ -10,7 +10,9 @@ public class TicTacToeMain {
 
     static class Move {
         int row = -1, col = -1;
-    };
+    }
+
+    ;
 
     /*
         Initialise the board as a two-dimensional matrix with value as -1 and size as 3 * 3.
@@ -41,20 +43,30 @@ public class TicTacToeMain {
         If all positions are marked or there is a winner it displays the winner.
         Returns if it is possible to continue game or not.
     */
-    static int playNextMove(int player, int row, int col, Player players) {
+    static int playNextMove(int player, int row, int col,
+                            Player playerOne, Player playerTwo, Player playerThree, boolean isPlayerTwoAi) {
         int canGameContinue = 1;
         board.get(row).set(col, player);
         int playerWon = getWinner();
         if (playerWon != 0 || !checkAnyMoveLeft()) {
             if (playerWon == PLAYER_ONE) {
                 System.out.println("Winner is Player 1");
-                players.setNumberOfWins(1);
+                playerOne.setNumberOfWins(1);
             } else if (playerWon == PLAYER_TWO) {
                 System.out.println("Winner is player 2");
-                players.setNumberOfGames(1);
+                if (isPlayerTwoAi) {
+                    playerThree.setNumberOfWins(1);
+                } else {
+                    playerTwo.setNumberOfWins(1);
+                }
             } else {
                 System.out.println("No one won, the match is tie");
-                players.setNumberOfTies(1);
+                playerOne.setNumberOfTies(1);
+                if (isPlayerTwoAi) {
+                    playerThree.setNumberOfTies(1);
+                } else {
+                    playerTwo.setNumberOfTies(1);
+                }
             }
             canGameContinue = 0;
             displayBoard();
@@ -352,7 +364,7 @@ public class TicTacToeMain {
                         }
                     }
                 }
-                if (playNextMove(player, row - 1, col - 1, playerOne) == 0) {
+                if (playNextMove(player, row - 1, col - 1, playerOne, playerTwo, playerThree, isPlayerTwoAi) == 0) {
                     displayScoreOfTheGame(playerOne, playerTwo, playerThree, isPlayerTwoAi);
                     System.out.println("Do you want to continue the game? Press 1 to " +
                             "play game once again and for EXIT press 0.");
