@@ -36,7 +36,7 @@ public class TicTacToeMain {
         if ((rowValue > '0') && (rowValue < '4') && (colValue > '0') && (colValue < '4')) {
             int row = rowValue - '0';
             int col = colValue - '0';
-            if (gameBoard.get(row-1).get(col-1) == -1) {
+            if (gameBoard.get(row - 1).get(col - 1) == -1) {
                 return true;
             }
         }
@@ -246,6 +246,42 @@ public class TicTacToeMain {
         System.out.println();
     }
 
+    static int getValidGameModeInputFromUser(Scanner sc) {
+        int gameMode = -1;
+        while (true) {
+            System.out.println("GAME MODE " + "\n1.HARD press 1" + "\n2.EASY press 2");
+            String gameModeInput = sc.nextLine();
+            if (gameModeInput.equals("1")) {
+                gameMode = 1;
+                break;
+            } else if (gameModeInput.equals("2")) {
+                gameMode = 2;
+                break;
+            } else {
+                continue;
+            }
+        }
+        return gameMode;
+    }
+
+    static int getValidYesOrNoInputFromUser(Scanner sc, String messageQuery) {
+        int validInput;
+        while (true) {
+            System.out.println(messageQuery);
+            String gameModeInput = sc.nextLine();
+            if (gameModeInput.equals("1")) {
+                validInput = 1;
+                break;
+            } else if (gameModeInput.equals("0")) {
+                validInput = 0;
+                break;
+            } else {
+                continue;
+            }
+        }
+        return validInput;
+    }
+
     static void displayScoreOfTheGame(Player playerOne, Player playerTwo, Player playerThree, boolean isPlayerTwoAi) {
         System.out.println("Game Statistics: ");
         System.out.println(playerOne.getName() + "->");
@@ -275,15 +311,16 @@ public class TicTacToeMain {
         String inputFromPlayer = sc.nextLine();
         if (inputFromPlayer.equalsIgnoreCase("HELP")) {
             Move suggestedNextBestMove = autoSuggestNextBestMove(player);
-            System.out.println("Do You want to continue with the suggestion if 'Yes' press 1 if 'No' press 2.");
-            if (Integer.parseInt(sc.nextLine()) == 1) {
+
+            if (getValidYesOrNoInputFromUser(sc,
+                    "Do You want to continue with the suggestion if 'Yes' press 1 if 'No' press 0.") == 1) {
                 nextMoveFromUser.row = suggestedNextBestMove.row;
                 nextMoveFromUser.col = suggestedNextBestMove.col;
             } else {
                 System.out.println("Enter a valid position in the format row column , the value should be greater" +
                         " than 0 and less than 4. ");
                 String[] input = sc.nextLine().split(" ");
-                while (!isNextMoveValid(input)){
+                while (!isNextMoveValid(input)) {
                     System.out.println("Enter a valid position in the format row column , the value should be greater" +
                             " than 0 and less than 4. ");
                     input = sc.nextLine().split(" ");
@@ -304,7 +341,7 @@ public class TicTacToeMain {
             nextMoveFromUser.col = -2;
         } else {
             String[] input = inputFromPlayer.split(" ");
-            while (!isNextMoveValid(input)){
+            while (!isNextMoveValid(input)) {
                 System.out.println("Enter a valid position in the format row column , the value should be greater" +
                         " than 0 and less than 4. ");
                 input = sc.nextLine().split(" ");
@@ -320,25 +357,23 @@ public class TicTacToeMain {
     */
     static void playGame() {
         Scanner sc = new Scanner(System.in);
-
+        Player playerOne = new Player();
+        Player playerTwo = new Player();
+        Player playerThree = new Player();
+        System.out.println("Player 1 enter name.");
+        playerOne.setName(sc.nextLine());
+        System.out.println("Player 2 enter name.");
+        playerTwo.setName(sc.nextLine());
+        playerThree.setName("CPU");
         while (true) {
+            playerOne.setNumberOfGames(1);
             System.out.println("Do you want to play with Computer? If 'Yes' then press 1 or press 0 for 'No'");
             boolean isPlayerTwoAi = Integer.parseInt(sc.nextLine()) == 1;
-            Player playerOne = new Player();
-            Player playerTwo = new Player();
-            Player playerThree = new Player();
-            System.out.println("Player 1 enter name.");
-            playerOne.setName(sc.nextLine());
-            playerOne.setNumberOfGames(1);
-            playerThree.setName("CPU");
             if (!isPlayerTwoAi) {
-                System.out.println("Player 2 enter name.");
-                playerTwo.setName(sc.nextLine());
                 playerTwo.setNumberOfGames(1);
             } else {
                 playerThree.setNumberOfGames(1);
-                System.out.println("GAME MODE " + "\n1.HARD press 1" + "\n2.EASY press 2");
-                GAME_MODE = Integer.parseInt(sc.nextLine());
+                GAME_MODE = getValidGameModeInputFromUser(sc);
             }
             System.out.println("'_' is marked as unmarked position and" + "'X' for " + playerOne.getName() +
                     " and 'O' for " + (isPlayerTwoAi ? playerThree.getName() : playerTwo.getName()));
@@ -369,7 +404,7 @@ public class TicTacToeMain {
                     row = nextBestPredictedMove.row;
                     col = nextBestPredictedMove.col;
                 }
-                if (!isNextMoveValid(new String[]{String.valueOf(row),String.valueOf(col)})) {
+                if (!isNextMoveValid(new String[]{String.valueOf(row), String.valueOf(col)})) {
                     while (true) {
                         System.out.println("You've entered an invalid position, please enter a valid position in the" +
                                 "\nformat row column which should be less than 4 and greater than 0 " +
@@ -384,16 +419,10 @@ public class TicTacToeMain {
                 }
                 if (playNextMove(player, row - 1, col - 1, playerOne, playerTwo, playerThree, isPlayerTwoAi) == 0) {
                     displayScoreOfTheGame(playerOne, playerTwo, playerThree, isPlayerTwoAi);
-                    System.out.println("Do you want to continue the game? Press 1 to " +
-                            "play game once again and for EXIT press 0.");
-                    if (Integer.parseInt(sc.nextLine()) == 1) {
-                        System.out.println("Do you want to play with computer? If 'Yes' press 1 and for 'No' press 0.");
-                        isPlayerTwoAi = Integer.parseInt(sc.nextLine()) == 1;
+                    if (getValidYesOrNoInputFromUser(sc, "Do you want to continue the game? Press 1 to " +
+                            "play game once again and for EXIT press 0.")==1) {
                         reInitialiseBoard();
-                        playerOne.setNumberOfGames(1);
-                        playerThree.setNumberOfGames(1);
-                        player = PLAYER_ONE;
-                        continue;
+                        break;
                     } else {
                         shouldGameContinue = false;
                     }
