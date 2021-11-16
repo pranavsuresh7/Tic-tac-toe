@@ -10,7 +10,9 @@ public class TicTacToeMain {
 
     static class Move {
         int row = -1, col = -1;
-    };
+    }
+
+    ;
 
     /*
         Initialise the board as a two-dimensional matrix with value as -1 and size as 3 * 3.
@@ -26,12 +28,17 @@ public class TicTacToeMain {
         Checks if the user input is valid or not.
         Input is valid if position is inside the board, and it has not been marked yet.
     */
-    static boolean isNextMoveValid(int row, int col) {
-        if (row > 2 || row < 0 || col > 2 || col < 0) {
-            return false;
-        }
-        if (gameBoard.get(row).get(col) == -1) {
-            return true;
+    static boolean isNextMoveValid(String[] move) {
+        if (move.length != 2) return false;
+        if (move[0].length() > 1 || move[1].length() > 1) return false;
+        char rowValue = move[0].charAt(0);
+        char colValue = move[1].charAt(0);
+        if ((rowValue > '0') && (rowValue < '4') && (colValue > '0') && (colValue < '4')) {
+            int row = rowValue - '0';
+            int col = colValue - '0';
+            if (gameBoard.get(row-1).get(col-1) == -1) {
+                return true;
+            }
         }
         return false;
     }
@@ -241,18 +248,18 @@ public class TicTacToeMain {
 
     static void displayScoreOfTheGame(Player playerOne, Player playerTwo, Player playerThree, boolean isPlayerTwoAi) {
         System.out.println("Game Statistics: ");
-        System.out.println(playerOne.getName()+"->");
+        System.out.println(playerOne.getName() + "->");
         System.out.println("  #Wins: " + playerOne.getNumberOfWins());
         System.out.println("  #Losses: " + playerOne.getNumberOfLoss());
         System.out.println("  #Ties: " + playerOne.getNumberOfTies());
         if (isPlayerTwoAi) {
-            System.out.println("\n"+playerThree .getName()+"->");
+            System.out.println("\n" + playerThree.getName() + "->");
             System.out.println("  #Wins: " + playerThree.getNumberOfWins());
             System.out.println("  #Losses: " + playerThree.getNumberOfLoss());
             System.out.println("  #Ties: " + playerOne.getNumberOfTies());
 
         } else {
-            System.out.println("\n"+playerTwo .getName()+"->");
+            System.out.println("\n" + playerTwo.getName() + "->");
             System.out.println("  #Wins: " + playerTwo.getNumberOfWins());
             System.out.println("  #Losses: " + playerTwo.getNumberOfLoss());
             System.out.println("  #Ties: " + playerTwo.getNumberOfTies());
@@ -266,7 +273,7 @@ public class TicTacToeMain {
                 "the value should be greater than 0 and less than 4. , type HELP for autosuggestion. " +
                 "type RESET for resetting the game.");
         String inputFromPlayer = sc.nextLine();
-        if (inputFromPlayer.equals("HELP")) {
+        if (inputFromPlayer.equalsIgnoreCase("HELP")) {
             Move suggestedNextBestMove = autoSuggestNextBestMove(player);
             System.out.println("Do You want to continue with the suggestion if 'Yes' press 1 if 'No' press 2.");
             if (Integer.parseInt(sc.nextLine()) == 1) {
@@ -276,10 +283,15 @@ public class TicTacToeMain {
                 System.out.println("Enter a valid position in the format row column , the value should be greater" +
                         " than 0 and less than 4. ");
                 String[] input = sc.nextLine().split(" ");
+                while (!isNextMoveValid(input)){
+                    System.out.println("Enter a valid position in the format row column , the value should be greater" +
+                            " than 0 and less than 4. ");
+                    input = sc.nextLine().split(" ");
+                }
                 nextMoveFromUser.row = Integer.parseInt(input[0]);
                 nextMoveFromUser.col = Integer.parseInt(input[1]);
             }
-        } else if (inputFromPlayer.equals("RESET")) {
+        } else if (inputFromPlayer.equalsIgnoreCase("RESET")) {
             reInitialiseBoard();
             currentPlayer.setNumberOfTies(1);
             if (isPlayerTwoAi) {
@@ -292,6 +304,11 @@ public class TicTacToeMain {
             nextMoveFromUser.col = -2;
         } else {
             String[] input = inputFromPlayer.split(" ");
+            while (!isNextMoveValid(input)){
+                System.out.println("Enter a valid position in the format row column , the value should be greater" +
+                        " than 0 and less than 4. ");
+                input = sc.nextLine().split(" ");
+            }
             nextMoveFromUser.row = Integer.parseInt(input[0]);
             nextMoveFromUser.col = Integer.parseInt(input[1]);
         }
@@ -352,14 +369,15 @@ public class TicTacToeMain {
                     row = nextBestPredictedMove.row;
                     col = nextBestPredictedMove.col;
                 }
-                if (!isNextMoveValid(row - 1, col - 1)) {
+                if (!isNextMoveValid(new String[]{String.valueOf(row),String.valueOf(col)})) {
                     while (true) {
                         System.out.println("You've entered an invalid position, please enter a valid position in the" +
                                 "\nformat row column which should be less than 4 and greater than 0 " +
                                 "and it shouldn't be a marked position.");
-                        row = Integer.parseInt(sc.nextLine());
-                        col = Integer.parseInt(sc.nextLine());
-                        if (isNextMoveValid(row - 1, col - 1)) {
+                        String[] move = sc.nextLine().split(" ");
+                        if (isNextMoveValid(move)) {
+                            row = Integer.parseInt(move[0]);
+                            col = Integer.parseInt(move[1]);
                             break;
                         }
                     }
