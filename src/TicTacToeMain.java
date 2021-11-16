@@ -10,9 +10,7 @@ public class TicTacToeMain {
 
     static class Move {
         int row = -1, col = -1;
-    }
-
-    ;
+    };
 
     /*
         Initialise the board as a two-dimensional matrix with value as -1 and size as 3 * 3.

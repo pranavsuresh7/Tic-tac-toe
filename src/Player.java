@@ -37,6 +37,6 @@ public class Player {
     }
 
     public void setNumberOfTies(int numberOfTies) {
-        this.numberOfTies = numberOfTies;
+        this.numberOfTies += numberOfTies;
     }
 }
