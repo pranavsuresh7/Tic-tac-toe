@@ -6,21 +6,19 @@ public class TicTacToeMain {
     static final int PLAYER_TWO = 2;
     static int GAME_MODE = 1;
 
-    private static ArrayList<List<Integer>> board;
+    private static ArrayList<List<Integer>> gameBoard;
 
     static class Move {
         int row = -1, col = -1;
-    }
-
-    ;
+    };
 
     /*
         Initialise the board as a two-dimensional matrix with value as -1 and size as 3 * 3.
     */
     static void initialiseBoard() {
-        board = new ArrayList<List<Integer>>();
+        gameBoard = new ArrayList<List<Integer>>();
         for (int i = 0; i < 3; i++) {
-            board.add(Arrays.asList(-1, -1, -1));
+            gameBoard.add(Arrays.asList(-1, -1, -1));
         }
     }
 
@@ -32,7 +30,7 @@ public class TicTacToeMain {
         if (row > 2 || row < 0 || col > 2 || col < 0) {
             return false;
         }
-        if (board.get(row).get(col) == -1) {
+        if (gameBoard.get(row).get(col) == -1) {
             return true;
         }
         return false;
@@ -46,21 +44,18 @@ public class TicTacToeMain {
     static int playNextMove(int player, int row, int col,
                             Player playerOne, Player playerTwo, Player playerThree, boolean isPlayerTwoAi) {
         int canGameContinue = 1;
-        board.get(row).set(col, player);
+        gameBoard.get(row).set(col, player);
         int playerWon = getWinner();
         if (playerWon != 0 || !checkAnyMoveLeft()) {
             if (playerWon == PLAYER_ONE) {
-                System.out.println("Winner is Player 1");
                 playerOne.setNumberOfWins(1);
             } else if (playerWon == PLAYER_TWO) {
-                System.out.println("Winner is player 2");
                 if (isPlayerTwoAi) {
                     playerThree.setNumberOfWins(1);
                 } else {
                     playerTwo.setNumberOfWins(1);
                 }
             } else {
-                System.out.println("No one won, the match is tie");
                 playerOne.setNumberOfTies(1);
                 if (isPlayerTwoAi) {
                     playerThree.setNumberOfTies(1);
@@ -80,29 +75,29 @@ public class TicTacToeMain {
     static int getWinner() {
         int TIE = 0;
         for (int i = 0; i < 3; i++) {
-            if (board.get(i).get(0) == 1 && board.get(i).get(1) == 1 && board.get(i).get(2) == 1) {
+            if (gameBoard.get(i).get(0) == 1 && gameBoard.get(i).get(1) == 1 && gameBoard.get(i).get(2) == 1) {
                 return PLAYER_ONE;
             }
-            if (board.get(i).get(0) == 2 && board.get(i).get(1) == 2 && board.get(i).get(2) == 2) {
+            if (gameBoard.get(i).get(0) == 2 && gameBoard.get(i).get(1) == 2 && gameBoard.get(i).get(2) == 2) {
                 return PLAYER_TWO;
             }
-            if (board.get(0).get(i) == 1 && board.get(1).get(i) == 1 && board.get(2).get(i) == 1) {
+            if (gameBoard.get(0).get(i) == 1 && gameBoard.get(1).get(i) == 1 && gameBoard.get(2).get(i) == 1) {
                 return PLAYER_ONE;
             }
-            if (board.get(0).get(i) == 2 && board.get(1).get(i) == 2 && board.get(2).get(i) == 2) {
+            if (gameBoard.get(0).get(i) == 2 && gameBoard.get(1).get(i) == 2 && gameBoard.get(2).get(i) == 2) {
                 return PLAYER_TWO;
             }
         }
-        if (board.get(0).get(0) == 1 && board.get(1).get(1) == 1 && board.get(2).get(2) == 1) {
+        if (gameBoard.get(0).get(0) == 1 && gameBoard.get(1).get(1) == 1 && gameBoard.get(2).get(2) == 1) {
             return PLAYER_ONE;
         }
-        if (board.get(0).get(0) == 2 && board.get(1).get(1) == 2 && board.get(2).get(2) == 2) {
+        if (gameBoard.get(0).get(0) == 2 && gameBoard.get(1).get(1) == 2 && gameBoard.get(2).get(2) == 2) {
             return PLAYER_TWO;
         }
-        if (board.get(2).get(0) == 1 && board.get(1).get(1) == 1 && board.get(0).get(2) == 1) {
+        if (gameBoard.get(2).get(0) == 1 && gameBoard.get(1).get(1) == 1 && gameBoard.get(0).get(2) == 1) {
             return PLAYER_ONE;
         }
-        if (board.get(2).get(0) == 2 && board.get(1).get(1) == 2 && board.get(0).get(2) == 2) {
+        if (gameBoard.get(2).get(0) == 2 && gameBoard.get(1).get(1) == 2 && gameBoard.get(0).get(2) == 2) {
             return PLAYER_TWO;
         }
         return TIE;
@@ -114,7 +109,7 @@ public class TicTacToeMain {
     static boolean checkAnyMoveLeft() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (board.get(i).get(j) == -1) {
+                if (gameBoard.get(i).get(j) == -1) {
                     return true;
                 }
             }
@@ -128,7 +123,7 @@ public class TicTacToeMain {
     static void reInitialiseBoard() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                board.get(i).set(j, -1);
+                gameBoard.get(i).set(j, -1);
             }
         }
     }
@@ -151,11 +146,11 @@ public class TicTacToeMain {
             int bestScore = -1000;
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
-                    if (board.get(i).get(j) == -1) {
-                        board.get(i).set(j, player);
+                    if (gameBoard.get(i).get(j) == -1) {
+                        gameBoard.get(i).set(j, player);
                         bestScore = Math.max(bestScore, miniMax(player,
                                 !checkIsMaxValue));
-                        board.get(i).set(j, -1);
+                        gameBoard.get(i).set(j, -1);
                     }
                 }
             }
@@ -164,11 +159,11 @@ public class TicTacToeMain {
             int bestScore = 1000;
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
-                    if (board.get(i).get(j) == -1) {
-                        board.get(i).set(j, player == PLAYER_TWO ? PLAYER_ONE : PLAYER_TWO);
+                    if (gameBoard.get(i).get(j) == -1) {
+                        gameBoard.get(i).set(j, player == PLAYER_TWO ? PLAYER_ONE : PLAYER_TWO);
                         bestScore = Math.min(bestScore, miniMax(player,
                                 !checkIsMaxValue));
-                        board.get(i).set(j, -1);
+                        gameBoard.get(i).set(j, -1);
                     }
                 }
             }
@@ -186,10 +181,10 @@ public class TicTacToeMain {
         int row = -1, col = -1;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (board.get(i).get(j) == -1) {
-                    board.get(i).set(j, player);
+                if (gameBoard.get(i).get(j) == -1) {
+                    gameBoard.get(i).set(j, player);
                     int nextBestMoveScore = miniMax(player, false);
-                    board.get(i).set(j, -1);
+                    gameBoard.get(i).set(j, -1);
                     if (nextBestMoveScore > tempBestScore) {
                         tempBestScore = nextBestMoveScore;
                         row = i;
@@ -215,10 +210,10 @@ public class TicTacToeMain {
     */
     static Move autoSuggestNextBestMove(int player) {
         Move suggestedNextBestMove = predictNextBestMove(player);
-        board.get(suggestedNextBestMove.row - 1).set(suggestedNextBestMove.col - 1, player);
+        gameBoard.get(suggestedNextBestMove.row - 1).set(suggestedNextBestMove.col - 1, player);
         System.out.println("Preview of the suggested move.");
         displayBoard();
-        board.get(suggestedNextBestMove.row - 1).set(suggestedNextBestMove.col - 1, -1);
+        gameBoard.get(suggestedNextBestMove.row - 1).set(suggestedNextBestMove.col - 1, -1);
         return suggestedNextBestMove;
     }
 
@@ -230,13 +225,13 @@ public class TicTacToeMain {
         for (int i = 0; i < 3; i++) {
             System.out.println();
             for (int j = 0; j < 3; j++) {
-                if (board.get(i).get(j) == -1) {
+                if (gameBoard.get(i).get(j) == -1) {
                     System.out.print("_ ");
                 }
-                if (board.get(i).get(j) == PLAYER_ONE) {
+                if (gameBoard.get(i).get(j) == PLAYER_ONE) {
                     System.out.print("X ");
                 }
-                if (board.get(i).get(j) == PLAYER_TWO) {
+                if (gameBoard.get(i).get(j) == PLAYER_TWO) {
                     System.out.print("O ");
                 }
             }
@@ -245,17 +240,22 @@ public class TicTacToeMain {
     }
 
     static void displayScoreOfTheGame(Player playerOne, Player playerTwo, Player playerThree, boolean isPlayerTwoAi) {
-        System.out.println(playerOne.getName() + " won: " + playerOne.getNumberOfWins() + " times");
-        System.out.println("loss: " + playerOne.getNumberOfLoss());
-        System.out.println("Number of matches tie " + playerOne.getNumberOfTies());
+        System.out.println("Game Statistics: ");
+        System.out.println(playerOne.getName()+"->");
+        System.out.println("  #Wins: " + playerOne.getNumberOfWins());
+        System.out.println("  #Losses: " + playerOne.getNumberOfLoss());
+        System.out.println("  #Ties: " + playerOne.getNumberOfTies());
         if (isPlayerTwoAi) {
-            System.out.println("\n" + playerThree.getName() + " won: " + playerThree.getNumberOfWins() + " times");
-            System.out.println("loss: " + playerThree.getNumberOfLoss());
-            System.out.println("Number of matches tie " + playerThree.getNumberOfTies());
+            System.out.println("\n"+playerThree .getName()+"->");
+            System.out.println("  #Wins: " + playerThree.getNumberOfWins());
+            System.out.println("  #Losses: " + playerThree.getNumberOfLoss());
+            System.out.println("  #Ties: " + playerOne.getNumberOfTies());
+
         } else {
-            System.out.println("\n" + playerTwo.getName() + " won: " + playerTwo.getNumberOfWins() + " times");
-            System.out.println("loss: " + playerTwo.getNumberOfLoss());
-            System.out.println("Number of matches tie " + playerTwo.getNumberOfTies());
+            System.out.println("\n"+playerTwo .getName()+"->");
+            System.out.println("  #Wins: " + playerTwo.getNumberOfWins());
+            System.out.println("  #Losses: " + playerTwo.getNumberOfLoss());
+            System.out.println("  #Ties: " + playerTwo.getNumberOfTies());
         }
     }
 
@@ -372,6 +372,8 @@ public class TicTacToeMain {
                         System.out.println("Do you want to play with computer? If 'Yes' press 1 and for 'No' press 0.");
                         isPlayerTwoAi = Integer.parseInt(sc.nextLine()) == 1;
                         reInitialiseBoard();
+                        playerOne.setNumberOfGames(1);
+                        playerThree.setNumberOfGames(1);
                         player = PLAYER_ONE;
                         continue;
                     } else {
@@ -394,3 +396,4 @@ public class TicTacToeMain {
         playGame();
     }
 }
+
