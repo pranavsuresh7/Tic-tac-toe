@@ -181,19 +181,19 @@ public class TicTacToeMain {
         Predicts the next best move using minimax algorithm.
     */
     static Move predictNextBestMove(int player) {
-        if(GAME_MODE == 2 && player == PLAYER_TWO){
+        if (GAME_MODE == 2 && player == PLAYER_TWO) {
             ArrayList<Move> unmarkedMoves = new ArrayList<>();
-            for(int i=0;i<3;i++){
-                for(int j=0;j<3;j++){
-                    if(gameBoard.get(i).get(j)==-1){
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if (gameBoard.get(i).get(j) == -1) {
                         Move unmarkedMove = new Move();
-                        unmarkedMove.row = i+1;
-                        unmarkedMove.col = j+1;
+                        unmarkedMove.row = i + 1;
+                        unmarkedMove.col = j + 1;
                         unmarkedMoves.add(unmarkedMove);
                     }
                 }
             }
-            int randomUnmarkedMovesIndex = ThreadLocalRandom.current().nextInt(0,unmarkedMoves.size());
+            int randomUnmarkedMovesIndex = ThreadLocalRandom.current().nextInt(0, unmarkedMoves.size());
             return unmarkedMoves.get(randomUnmarkedMovesIndex);
         }
 
@@ -271,10 +271,15 @@ public class TicTacToeMain {
         return gameMode;
     }
 
-    static int getValidYesOrNoInputFromUser(Scanner sc, String message) {
+    static int getValidYesOrNoInputFromUser(Scanner sc, String message, String messageForInvalidInput) {
         int validInput;
+        boolean isInvalidInput = false;
         while (true) {
-            System.out.println(message);
+            if (isInvalidInput) {
+                System.out.println(messageForInvalidInput);
+            } else {
+                System.out.println(message);
+            }
             String gameModeInput = sc.nextLine();
             if (gameModeInput.equals("1")) {
                 validInput = 1;
@@ -283,6 +288,7 @@ public class TicTacToeMain {
                 validInput = 0;
                 break;
             } else {
+                isInvalidInput = true;
                 continue;
             }
         }
@@ -312,50 +318,70 @@ public class TicTacToeMain {
     static Move getNextMoveFromUser(Scanner sc, Player currentPlayer, Player playerTwo,
                                     Player playerThree, int player, Boolean isPlayerTwoAi) {
         Move nextMoveFromUser = new Move();
-        System.out.println(currentPlayer.getName() + "'s turn,Enter a valid position in the format row column, \n" +
-                "the value should be greater than 0 and less than 4. Examples of valid positions - 1 2, 3 3, 2 3." +
-                "\nType HELP for autosuggestion. " +
-                "\nType RESET for resetting the game.");
-        String inputFromPlayer = sc.nextLine();
-        if (inputFromPlayer.equalsIgnoreCase("HELP")) {
-            Move suggestedNextBestMove = autoSuggestNextBestMove(player);
-
-            if (getValidYesOrNoInputFromUser(sc,
-                    "Do You want to continue with the suggestion if 'Yes' press 1 if 'No' press 0.") == 1) {
-                nextMoveFromUser.row = suggestedNextBestMove.row;
-                nextMoveFromUser.col = suggestedNextBestMove.col;
-            } else {
-                System.out.println("Enter a valid position in the format row column , the value should be greater" +
-                        " than 0 and less than 4. ");
-                String[] input = sc.nextLine().split(" ");
-                while (!isNextMoveValid(input)) {
+        boolean isNextMoveInvalid = false;
+        while(true) {
+            if(isNextMoveInvalid){
+                System.out.println("You've entered command in wrong format. " +
+                        currentPlayer.getName()+" Please follow the below guidelines.");
+                System.out.println("Enter a valid position in the " +
+                        "format row column, \n" +
+                        "the value should be greater than 0 and less than 4. Examples of valid positions - 1 2, 3 3, 2 3. " +
+                        "It shouldn't be a marked position." +
+                        "\nType HELP for autosuggestion. " +
+                        "\nType RESET for resetting the game.");
+            }else{
+                System.out.println(currentPlayer.getName() + "'s turn,Enter a valid position in the " +
+                        "format row column, \n" +
+                        "the value should be greater than 0 and less than 4. Examples of valid positions - 1 2, 3 3, 2 3. " +
+                        "It shouldn't be a marked position." +
+                        "\nType HELP for autosuggestion. " +
+                        "\nType RESET for resetting the game.");
+            }
+            String inputFromPlayer = sc.nextLine();
+            if (inputFromPlayer.equalsIgnoreCase("HELP")) {
+                Move suggestedNextBestMove = autoSuggestNextBestMove(player);
+                if (getValidYesOrNoInputFromUser(sc,
+                        "Do You want to continue with the suggestion if 'Yes' press 1 if 'No' press 0."
+                        , "Please type valid input, " +
+                                "to continue with the suggestion if 'Yes' press 1 if 'No' press 0") == 1) {
+                    nextMoveFromUser.row = suggestedNextBestMove.row;
+                    nextMoveFromUser.col = suggestedNextBestMove.col;
+                } else {
                     System.out.println("Enter a valid position in the format row column , the value should be greater" +
-                            " than 0 and less than 4. Examples of valid positions - 1 2, 3 3, 2 3.");
-                    input = sc.nextLine().split(" ");
+                            "\nthan 0 and less than 4. Examples of valid positions - 1 2, 3 3, 2 3. " +
+                            "It shouldn't be a marked position.");
+                    String[] input = sc.nextLine().split(" ");
+                    while (!isNextMoveValid(input)) {
+                        System.out.println("Enter a valid position in the format row column , the value should be greater" +
+                                "\nthan 0 and less than 4. Examples of valid positions - 1 2, 3 3, 2 3. " +
+                                "It shouldn't be a marked position.");
+                        input = sc.nextLine().split(" ");
+                    }
+                    nextMoveFromUser.row = Integer.parseInt(input[0]);
+                    nextMoveFromUser.col = Integer.parseInt(input[1]);
                 }
+                break;
+            } else if (inputFromPlayer.equalsIgnoreCase("RESET")) {
+                reInitialiseBoard();
+                currentPlayer.setNumberOfTies(1);
+                if (isPlayerTwoAi) {
+                    playerThree.setNumberOfTies(1);
+                } else {
+                    playerTwo.setNumberOfTies(1);
+                }
+                displayScoreOfTheGame(currentPlayer, playerTwo, playerThree, isPlayerTwoAi);
+                nextMoveFromUser.row = -2;
+                nextMoveFromUser.col = -2;
+                break;
+            } else if (isNextMoveValid(inputFromPlayer.split(" "))) {
+                String[] input = inputFromPlayer.split(" ");
                 nextMoveFromUser.row = Integer.parseInt(input[0]);
                 nextMoveFromUser.col = Integer.parseInt(input[1]);
-            }
-        } else if (inputFromPlayer.equalsIgnoreCase("RESET")) {
-            reInitialiseBoard();
-            currentPlayer.setNumberOfTies(1);
-            if (isPlayerTwoAi) {
-                playerThree.setNumberOfTies(1);
+                break;
             } else {
-                playerTwo.setNumberOfTies(1);
+                isNextMoveInvalid = true;
+                continue;
             }
-            displayScoreOfTheGame(currentPlayer, playerTwo, playerThree, isPlayerTwoAi);
-            nextMoveFromUser.row = -2;
-            nextMoveFromUser.col = -2;
-        } else {
-            String[] input = inputFromPlayer.split(" ");
-            while (!isNextMoveValid(input)) {
-                System.out.println("Enter a valid position in the format row column , the value should be greater" +
-                        " than 0 and less than 4. Examples of valid positions - 1 2, 3 3, 2 3 ");
-                input = sc.nextLine().split(" ");
-            }
-            nextMoveFromUser.row = Integer.parseInt(input[0]);
-            nextMoveFromUser.col = Integer.parseInt(input[1]);
         }
         return nextMoveFromUser;
     }
@@ -376,7 +402,8 @@ public class TicTacToeMain {
         while (true) {
             playerOne.setNumberOfGames(1);
             boolean isPlayerTwoAi = getValidYesOrNoInputFromUser(sc
-                    ,"Do you want to play with Computer? If 'Yes' then press 1 or press 0 for 'No'") == 1;
+                    , "Do you want to play with Computer? If 'Yes' then press 1 or press 0 for 'No'"
+                    , "Please type valid input, for 'Yes' press 1 or press 0 for 'No'") == 1;
             if (!isPlayerTwoAi) {
                 playerTwo.setNumberOfGames(1);
                 GAME_MODE = 1;
@@ -416,8 +443,9 @@ public class TicTacToeMain {
                 if (!isNextMoveValid(new String[]{String.valueOf(row), String.valueOf(col)})) {
                     while (true) {
                         System.out.println("You've entered an invalid position, please enter a valid position in the" +
-                                "\nformat row column which should be less than 4 and greater than 0 " +
-                                "and it shouldn't be a marked position.");
+                                "\nformat row column which should be less than 4 and greater than 0. " +
+                                "Examples of valid positions - 1 2, 3 3, 2 3." +
+                                "It shouldn't be a marked position.");
                         String[] move = sc.nextLine().split(" ");
                         if (isNextMoveValid(move)) {
                             row = Integer.parseInt(move[0]);
@@ -426,10 +454,12 @@ public class TicTacToeMain {
                         }
                     }
                 }
-                if (playNextMove(player, row - 1, col - 1, playerOne, playerTwo, playerThree, isPlayerTwoAi) == 0) {
+                if (playNextMove(player, row - 1, col - 1, playerOne, playerTwo, playerThree
+                        , isPlayerTwoAi) == 0) {
                     displayScoreOfTheGame(playerOne, playerTwo, playerThree, isPlayerTwoAi);
                     if (getValidYesOrNoInputFromUser(sc, "Do you want to continue the game? Press 1 to " +
-                            "play game once again and for EXIT press 0.")==1) {
+                            "play game once again and for EXIT press 0.", "Please type valid input," +
+                            " Press 1 to play game once again and for EXIT press 0") == 1) {
                         reInitialiseBoard();
                         break;
                     } else {
