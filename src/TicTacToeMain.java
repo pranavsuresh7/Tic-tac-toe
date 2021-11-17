@@ -312,9 +312,10 @@ public class TicTacToeMain {
     static Move getNextMoveFromUser(Scanner sc, Player currentPlayer, Player playerTwo,
                                     Player playerThree, int player, Boolean isPlayerTwoAi) {
         Move nextMoveFromUser = new Move();
-        System.out.println(currentPlayer.getName() + "'s turn,Enter a valid position in the format row column , \n" +
-                "the value should be greater than 0 and less than 4. , type HELP for autosuggestion. " +
-                "type RESET for resetting the game.");
+        System.out.println(currentPlayer.getName() + "'s turn,Enter a valid position in the format row column, \n" +
+                "the value should be greater than 0 and less than 4. Examples of valid positions - 1 2, 3 3, 2 3." +
+                "\nType HELP for autosuggestion. " +
+                "\nType RESET for resetting the game.");
         String inputFromPlayer = sc.nextLine();
         if (inputFromPlayer.equalsIgnoreCase("HELP")) {
             Move suggestedNextBestMove = autoSuggestNextBestMove(player);
@@ -329,7 +330,7 @@ public class TicTacToeMain {
                 String[] input = sc.nextLine().split(" ");
                 while (!isNextMoveValid(input)) {
                     System.out.println("Enter a valid position in the format row column , the value should be greater" +
-                            " than 0 and less than 4. ");
+                            " than 0 and less than 4. Examples of valid positions - 1 2, 3 3, 2 3.");
                     input = sc.nextLine().split(" ");
                 }
                 nextMoveFromUser.row = Integer.parseInt(input[0]);
@@ -350,7 +351,7 @@ public class TicTacToeMain {
             String[] input = inputFromPlayer.split(" ");
             while (!isNextMoveValid(input)) {
                 System.out.println("Enter a valid position in the format row column , the value should be greater" +
-                        " than 0 and less than 4. ");
+                        " than 0 and less than 4. Examples of valid positions - 1 2, 3 3, 2 3 ");
                 input = sc.nextLine().split(" ");
             }
             nextMoveFromUser.row = Integer.parseInt(input[0]);
