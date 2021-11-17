@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TicTacToeMain {
 
@@ -180,9 +181,24 @@ public class TicTacToeMain {
         Predicts the next best move using minimax algorithm.
     */
     static Move predictNextBestMove(int player) {
+        if(GAME_MODE == 2 && player == PLAYER_TWO){
+            ArrayList<Move> unmarkedMoves = new ArrayList<>();
+            for(int i=0;i<3;i++){
+                for(int j=0;j<3;j++){
+                    if(gameBoard.get(i).get(j)==-1){
+                        Move unmarkedMove = new Move();
+                        unmarkedMove.row = i+1;
+                        unmarkedMove.col = j+1;
+                        unmarkedMoves.add(unmarkedMove);
+                    }
+                }
+            }
+            int randomUnmarkedMovesIndex = ThreadLocalRandom.current().nextInt(0,unmarkedMoves.size());
+            return unmarkedMoves.get(randomUnmarkedMovesIndex);
+        }
+
         Move bestMove = new Move();
         int tempBestScore = -1000;
-        boolean gotAnyMove = false;
         int row = -1, col = -1;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -195,14 +211,7 @@ public class TicTacToeMain {
                         row = i;
                         col = j;
                     }
-                    if (GAME_MODE == 2 && player == PLAYER_TWO) {
-                        gotAnyMove = true;
-                        break;
-                    }
                 }
-            }
-            if (gotAnyMove) {
-                break;
             }
         }
         bestMove.row = row + 1;
@@ -262,10 +271,10 @@ public class TicTacToeMain {
         return gameMode;
     }
 
-    static int getValidYesOrNoInputFromUser(Scanner sc, String messageQuery) {
+    static int getValidYesOrNoInputFromUser(Scanner sc, String message) {
         int validInput;
         while (true) {
-            System.out.println(messageQuery);
+            System.out.println(message);
             String gameModeInput = sc.nextLine();
             if (gameModeInput.equals("1")) {
                 validInput = 1;
@@ -290,7 +299,7 @@ public class TicTacToeMain {
             System.out.println("\n" + playerThree.getName() + "->");
             System.out.println("  #Wins: " + playerThree.getNumberOfWins());
             System.out.println("  #Losses: " + playerThree.getNumberOfLoss());
-            System.out.println("  #Ties: " + playerOne.getNumberOfTies());
+            System.out.println("  #Ties: " + playerThree.getNumberOfTies());
 
         } else {
             System.out.println("\n" + playerTwo.getName() + "->");
@@ -365,10 +374,11 @@ public class TicTacToeMain {
         playerThree.setName("CPU");
         while (true) {
             playerOne.setNumberOfGames(1);
-            System.out.println("Do you want to play with Computer? If 'Yes' then press 1 or press 0 for 'No'");
-            boolean isPlayerTwoAi = Integer.parseInt(sc.nextLine()) == 1;
+            boolean isPlayerTwoAi = getValidYesOrNoInputFromUser(sc
+                    ,"Do you want to play with Computer? If 'Yes' then press 1 or press 0 for 'No'") == 1;
             if (!isPlayerTwoAi) {
                 playerTwo.setNumberOfGames(1);
+                GAME_MODE = 1;
             } else {
                 playerThree.setNumberOfGames(1);
                 GAME_MODE = getValidGameModeInputFromUser(sc);
