@@ -96,6 +96,12 @@ Player can RESET the game if at anytime he wants and continue playing game as lo
    ```java
     static void playGame() 
   ```
+  
+- Function displayGameScore: Display the game statistics like number of wins,losses,ties of 
+the players. 
+  ```java
+  static void displayGameScore(Player playerOne, Player playerTwo, Player playerThree, boolean isPlayerTwoAi)
+  ```
 
 ## Future Scope:
 - Players data can be stored on a database 

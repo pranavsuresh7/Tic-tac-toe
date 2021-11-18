@@ -237,7 +237,6 @@ public class TicTacToeMain {
     */
     static void displayBoard() {
         for (int i = 0; i < 3; i++) {
-            System.out.println();
             for (int j = 0; j < 3; j++) {
                 if (gameBoard.get(i).get(j) == -1) {
                     System.out.print("_ ");
@@ -249,14 +248,24 @@ public class TicTacToeMain {
                     System.out.print("O ");
                 }
             }
+            System.out.println();
         }
         System.out.println();
     }
 
+    /*
+        Get valid Game Mode input from the user, if the user types invalid case.
+    */
     static int getValidGameModeInputFromUser(Scanner sc) {
         int gameMode = -1;
+        boolean isGameModeInvalid = false;
         while (true) {
-            System.out.println("GAME MODE " + "\n1.HARD press 1" + "\n2.EASY press 2");
+            if (isGameModeInvalid) {
+                System.out.println("GAME MODE " + "\n1.HARD press 1" + "\n2.EASY press 2");
+            } else {
+                System.out.println("You've entered wrong input, please follow the below guidelines");
+                System.out.println("GAME MODE " + "\n1.HARD press 1" + "\n2.EASY press 2");
+            }
             String gameModeInput = sc.nextLine();
             if (gameModeInput.equals("1")) {
                 gameMode = 1;
@@ -265,12 +274,17 @@ public class TicTacToeMain {
                 gameMode = 2;
                 break;
             } else {
+                isGameModeInvalid = true;
                 continue;
             }
         }
         return gameMode;
     }
 
+    /*
+       Returns valid yes or no input from the user. Asks the user to type valid input till the user
+       type valid input.
+   */
     static int getValidYesOrNoInputFromUser(Scanner sc, String message, String messageForInvalidInput) {
         int validInput;
         boolean isInvalidInput = false;
@@ -289,50 +303,58 @@ public class TicTacToeMain {
                 break;
             } else {
                 isInvalidInput = true;
-                continue;
             }
         }
         return validInput;
     }
 
-    static void displayScoreOfTheGame(Player playerOne, Player playerTwo, Player playerThree, boolean isPlayerTwoAi) {
+    /*
+        Display score of the players with number of wins,losses and ties.
+    */
+    static void displayGameScore(Player playerOne, Player playerTwo, Player playerThree, boolean isPlayerTwoAi) {
+        System.out.println("--- GAME ENDS ---");
         System.out.println("Game Statistics: ");
         System.out.println(playerOne.getName() + "->");
-        System.out.println("  #Wins: " + playerOne.getNumberOfWins());
-        System.out.println("  #Losses: " + playerOne.getNumberOfLoss());
-        System.out.println("  #Ties: " + playerOne.getNumberOfTies());
+        System.out.println("  # Wins: " + playerOne.getNumberOfWins());
+        System.out.println("  # Losses: " + playerOne.getNumberOfLoss());
+        System.out.println("  # Ties: " + playerOne.getNumberOfTies());
         if (isPlayerTwoAi) {
             System.out.println("\n" + playerThree.getName() + "->");
-            System.out.println("  #Wins: " + playerThree.getNumberOfWins());
-            System.out.println("  #Losses: " + playerThree.getNumberOfLoss());
-            System.out.println("  #Ties: " + playerThree.getNumberOfTies());
+            System.out.println("  # Wins: " + playerThree.getNumberOfWins());
+            System.out.println("  # Losses: " + playerThree.getNumberOfLoss());
+            System.out.println("  # Ties: " + playerThree.getNumberOfTies());
 
         } else {
             System.out.println("\n" + playerTwo.getName() + "->");
-            System.out.println("  #Wins: " + playerTwo.getNumberOfWins());
-            System.out.println("  #Losses: " + playerTwo.getNumberOfLoss());
-            System.out.println("  #Ties: " + playerTwo.getNumberOfTies());
+            System.out.println("  # Wins: " + playerTwo.getNumberOfWins());
+            System.out.println("  # Losses: " + playerTwo.getNumberOfLoss());
+            System.out.println("  # Ties: " + playerTwo.getNumberOfTies());
         }
     }
 
+    /*
+        Returns move from the user.
+    */
     static Move getNextMoveFromUser(Scanner sc, Player currentPlayer, Player playerTwo,
                                     Player playerThree, int player, Boolean isPlayerTwoAi) {
         Move nextMoveFromUser = new Move();
         boolean isNextMoveInvalid = false;
-        while(true) {
-            if(isNextMoveInvalid){
-                System.out.println("You've entered command in wrong format. " +
-                        currentPlayer.getName()+" Please follow the below guidelines.");
+        while (true) {
+            if (isNextMoveInvalid) {
+                System.out.println("You've entered wrong input " +
+                        currentPlayer.getName() + " Please follow the below guidelines.");
                 System.out.println("Enter a valid position in the " +
                         "format row column, \n" +
-                        "the value should be greater than 0 and less than 4. Examples of valid positions - 1 2, 3 3, 2 3. " +
+                        "the value should be greater than 0 and less than 4. " +
+                        "Examples of valid positions - 1 2, 3 3, 2 3. " +
                         "It shouldn't be a marked position." +
                         "\nType HELP for autosuggestion. " +
                         "\nType RESET for resetting the game.");
-            }else{
+            } else {
                 System.out.println(currentPlayer.getName() + "'s turn,Enter a valid position in the " +
                         "format row column, \n" +
-                        "the value should be greater than 0 and less than 4. Examples of valid positions - 1 2, 3 3, 2 3. " +
+                        "the value should be greater than 0 and less than 4. " +
+                        "Examples of valid positions - 1 2, 3 3, 2 3. " +
                         "It shouldn't be a marked position." +
                         "\nType HELP for autosuggestion. " +
                         "\nType RESET for resetting the game.");
@@ -347,12 +369,15 @@ public class TicTacToeMain {
                     nextMoveFromUser.row = suggestedNextBestMove.row;
                     nextMoveFromUser.col = suggestedNextBestMove.col;
                 } else {
+                    System.out.println("Current State of the board.");
+                    displayBoard();
                     System.out.println("Enter a valid position in the format row column , the value should be greater" +
                             "\nthan 0 and less than 4. Examples of valid positions - 1 2, 3 3, 2 3. " +
                             "It shouldn't be a marked position.");
                     String[] input = sc.nextLine().split(" ");
                     while (!isNextMoveValid(input)) {
-                        System.out.println("Enter a valid position in the format row column , the value should be greater" +
+                        System.out.println("You've entered wrong input. Enter a valid position in the format row column " +
+                                ", the value should be greater" +
                                 "\nthan 0 and less than 4. Examples of valid positions - 1 2, 3 3, 2 3. " +
                                 "It shouldn't be a marked position.");
                         input = sc.nextLine().split(" ");
@@ -369,9 +394,16 @@ public class TicTacToeMain {
                 } else {
                     playerTwo.setNumberOfTies(1);
                 }
-                displayScoreOfTheGame(currentPlayer, playerTwo, playerThree, isPlayerTwoAi);
-                nextMoveFromUser.row = -2;
-                nextMoveFromUser.col = -2;
+                displayGameScore(currentPlayer, playerTwo, playerThree, isPlayerTwoAi);
+                if (getValidYesOrNoInputFromUser(sc, "Do you want to continue tha game again? " +
+                                "Press 1 for continue and 0 for EXIT.", "You've entered wrong input."
+                        + " Please press 1 for continue and 0 for EXIT") == 1) {
+                    nextMoveFromUser.row = -2;
+                    nextMoveFromUser.col = -2;
+                } else {
+                    nextMoveFromUser.row = -3;
+                    nextMoveFromUser.col = -3;
+                }
                 break;
             } else if (isNextMoveValid(inputFromPlayer.split(" "))) {
                 String[] input = inputFromPlayer.split(" ");
@@ -398,12 +430,13 @@ public class TicTacToeMain {
         playerOne.setName(sc.nextLine());
         System.out.println("Player 2 enter name.");
         playerTwo.setName(sc.nextLine());
-        playerThree.setName("CPU");
+        playerThree.setName("AI");
         while (true) {
             playerOne.setNumberOfGames(1);
             boolean isPlayerTwoAi = getValidYesOrNoInputFromUser(sc
-                    , "Do you want to play with Computer? If 'Yes' then press 1 or press 0 for 'No'"
-                    , "Please type valid input, for 'Yes' press 1 or press 0 for 'No'") == 1;
+                    , "Do you want to play against the AI or with a player? " +
+                            "Press 1 for AI and 0 for Player vs Player"
+                    , "Please type valid input, Press 1 for AI and 0 for Player vs Player") == 1;
             if (!isPlayerTwoAi) {
                 playerTwo.setNumberOfGames(1);
                 GAME_MODE = 1;
@@ -411,6 +444,7 @@ public class TicTacToeMain {
                 playerThree.setNumberOfGames(1);
                 GAME_MODE = getValidGameModeInputFromUser(sc);
             }
+            System.out.println("--- GAME BEGINS ---");
             System.out.println("'_' is marked as unmarked position and" + "'X' for " + playerOne.getName() +
                     " and 'O' for " + (isPlayerTwoAi ? playerThree.getName() : playerTwo.getName()));
             int player = PLAYER_ONE;
@@ -425,6 +459,9 @@ public class TicTacToeMain {
                     col = nextMoveFromUser.col;
                     if (nextMoveFromUser.row == -2 && nextMoveFromUser.col == -2) {
                         break;
+                    } else if (nextMoveFromUser.row == -3 && nextMoveFromUser.col == -3) {
+                        shouldGameContinue = false;
+                        break;
                     }
                 } else if (!isPlayerTwoAi && player == PLAYER_TWO) {
                     Move nextMoveFromUser = getNextMoveFromUser(sc, playerTwo
@@ -433,9 +470,12 @@ public class TicTacToeMain {
                     col = nextMoveFromUser.col;
                     if (nextMoveFromUser.row == -2 && nextMoveFromUser.col == -2) {
                         break;
+                    } else if (nextMoveFromUser.row == -3 && nextMoveFromUser.col == -3) {
+                        shouldGameContinue = false;
+                        break;
                     }
                 } else {
-                    System.out.println("CPU's Turn");
+                    System.out.println("AI's Turn");
                     Move nextBestPredictedMove = predictNextBestMove(PLAYER_TWO);
                     row = nextBestPredictedMove.row;
                     col = nextBestPredictedMove.col;
@@ -456,14 +496,13 @@ public class TicTacToeMain {
                 }
                 if (playNextMove(player, row - 1, col - 1, playerOne, playerTwo, playerThree
                         , isPlayerTwoAi) == 0) {
-                    displayScoreOfTheGame(playerOne, playerTwo, playerThree, isPlayerTwoAi);
-                    if (getValidYesOrNoInputFromUser(sc, "Do you want to continue the game? Press 1 to " +
+                    displayGameScore(playerOne, playerTwo, playerThree, isPlayerTwoAi);
+                    shouldGameContinue = getValidYesOrNoInputFromUser(sc, "Do you want to continue the game? Press 1 to " +
                             "play game once again and for EXIT press 0.", "Please type valid input," +
-                            " Press 1 to play game once again and for EXIT press 0") == 1) {
+                            " Press 1 to play game once again and for EXIT press 0") == 1;
+                    if (shouldGameContinue) {
                         reInitialiseBoard();
                         break;
-                    } else {
-                        shouldGameContinue = false;
                     }
                 }
                 player = player == PLAYER_ONE ? PLAYER_TWO : PLAYER_ONE;
