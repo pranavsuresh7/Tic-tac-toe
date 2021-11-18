@@ -261,9 +261,9 @@ public class TicTacToeMain {
         boolean isGameModeInvalid = false;
         while (true) {
             if (isGameModeInvalid) {
+                System.out.println("You've entered wrong input, please follow the below guidelines");
                 System.out.println("GAME MODE " + "\n1.HARD press 1" + "\n2.EASY press 2");
             } else {
-                System.out.println("You've entered wrong input, please follow the below guidelines");
                 System.out.println("GAME MODE " + "\n1.HARD press 1" + "\n2.EASY press 2");
             }
             String gameModeInput = sc.nextLine();
