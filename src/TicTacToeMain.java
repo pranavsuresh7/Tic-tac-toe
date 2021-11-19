@@ -137,7 +137,7 @@ public class TicTacToeMain {
     /*
         Minimax Algorithm which finds the best possible move.
     */
-    static int miniMax(int player, boolean checkIsMaxValue) {
+    static int miniMax(int player, boolean isMaximizer) {
         int playerWon = getWinner();
         if (playerWon == player) {
             return 10;
@@ -148,14 +148,14 @@ public class TicTacToeMain {
         if (!checkAnyMoveLeft()) {
             return 0;
         }
-        if (checkIsMaxValue) {
+        if (isMaximizer) {
             int bestScore = -1000;
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     if (gameBoard.get(i).get(j) == -1) {
                         gameBoard.get(i).set(j, player);
                         bestScore = Math.max(bestScore, miniMax(player,
-                                !checkIsMaxValue));
+                                !isMaximizer));
                         gameBoard.get(i).set(j, -1);
                     }
                 }
@@ -168,7 +168,7 @@ public class TicTacToeMain {
                     if (gameBoard.get(i).get(j) == -1) {
                         gameBoard.get(i).set(j, player == PLAYER_TWO ? PLAYER_ONE : PLAYER_TWO);
                         bestScore = Math.min(bestScore, miniMax(player,
-                                !checkIsMaxValue));
+                                !isMaximizer));
                         gameBoard.get(i).set(j, -1);
                     }
                 }
@@ -312,7 +312,6 @@ public class TicTacToeMain {
         Display score of the players with number of wins,losses and ties.
     */
     static void displayGameScore(Player playerOne, Player playerTwo, Player playerThree, boolean isPlayerTwoAi) {
-        System.out.println("--- GAME ENDS ---");
         System.out.println("Game Statistics: ");
         System.out.println(playerOne.getName() + "->");
         System.out.println("  # Wins: " + playerOne.getNumberOfWins());
@@ -394,6 +393,7 @@ public class TicTacToeMain {
                 } else {
                     playerTwo.setNumberOfTies(1);
                 }
+                System.out.println("---GAME TIED---");
                 displayGameScore(currentPlayer, playerTwo, playerThree, isPlayerTwoAi);
                 if (getValidYesOrNoInputFromUser(sc, "Do you want to continue tha game again? " +
                                 "Press 1 for continue and 0 for EXIT.", "You've entered wrong input."
@@ -496,6 +496,7 @@ public class TicTacToeMain {
                 }
                 if (playNextMove(player, row - 1, col - 1, playerOne, playerTwo, playerThree
                         , isPlayerTwoAi) == 0) {
+                    System.out.println("--- GAME ENDS ---");
                     displayGameScore(playerOne, playerTwo, playerThree, isPlayerTwoAi);
                     shouldGameContinue = getValidYesOrNoInputFromUser(sc, "Do you want to continue the game? Press 1 to " +
                             "play game once again and for EXIT press 0.", "Please type valid input," +
