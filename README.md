@@ -105,7 +105,6 @@ the players.
 
 ## Future Scope:
 - Predict the game is going to be tied, if there is no way for both the players to win.
-- Players data can be stored on a database 
-  - So entire player statistics associated with certain player could be displayed.
+- Players data can be stored on a database,so entire player statistics associated with certain player could be displayed.
 - Medium mode of the game with the computer/Ai can be added.
 - Instead of console for input/output can be changed to GUI.
